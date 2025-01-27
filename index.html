@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boxe Offset</title>
+    <link rel="icon" href="https://i.ibb.co/d2CV57V/Logotipo-para-clube-de-futebol-ilustrado-ousado-moderno-verde-branco-1.png" type="image/x-icon">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAT__I2TaGjFFDRdxN2Wm2ZBNjKJ0CBVNk",
+            authDomain: "boxeoffset.firebaseapp.com",
+            databaseURL: "https://boxeoffset-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "boxeoffset",
+            storageBucket: "boxeoffset.firebasestorage.app",
+            messagingSenderId: "944007061912",
+            appId: "1:944007061912:web:7a04dc109eded9d43a8bed",
+            measurementId: "G-8LSGMFRJBS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const fightsRef = ref(database, 'fights');
+        const footerRef = ref(database, 'footer');
+
+        function displayFights(fights) {
+            const fightsDiv = document.getElementById('fights');
+            fightsDiv.innerHTML = '';  
+
+            if (fights) {
+                Object.values(fights).forEach(fight => {
+                    const fightCard = document.createElement('div');
+                    fightCard.className = 'fight-card';
+                    fightCard.innerHTML = `
+                        <h3>${fight.name}</h3>
+                        <p><strong>Data:</strong> ${fight.date}</p>
+                        <p><strong>Horário:</strong> ${fight.time}</p>
+                    `;
+                    fightsDiv.appendChild(fightCard);
+                });
+            }
+        }
+
+        function updateFooter(text) {
+            document.getElementById('footer-text').innerText = text;
+        }
+
+        onValue(fightsRef, (snapshot) => {
+            const fights = snapshot.val();
+            displayFights(fights);
+        });
+
+        onValue(footerRef, (snapshot) => {
+            const footerText = snapshot.val() || 'Acompanhe os melhores confrontos!';
+            updateFooter(footerText);
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1d1d1d, #4b4b4b);
+            color: white;
+            text-align: center;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 60px 0;
+            background: rgba(0, 0, 0, 0.8);
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 4rem;
+            color: #FF6F61;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #FF6F61;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .fight-card {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fight-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .fight-card h3 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #FF6F61;
+            text-transform: uppercase;
+        }
+
+        .fight-card p {
+            font-size: 1.4rem;
+            margin: 10px 0;
+            color: #dfe6e9;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .scrolling-footer {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll 20s linear infinite;
+            color: #FF6F61;
+            font-weight: bold;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .fight-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Boxe Offset</h1>
+    </header>
+
+    <div class="container">
+        <h2>Lutas Programadas</h2>
+        <div id="fights"></div>
+    </div>
+
+    <footer>
+        <div class="scrolling-footer" id="footer-text"></div>
+    </footer>
+
+</body>
+</html>
